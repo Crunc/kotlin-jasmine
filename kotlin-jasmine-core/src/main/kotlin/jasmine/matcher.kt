@@ -15,16 +15,8 @@ external interface MatcherUtils {
 
 external interface CustomEqualityTesters
 
-typealias PartialCompareFunction<T> = (actual: T,
-                                       expected: T) -> Result
-
-typealias FullCompareFunction<T> = (actual: T,
-                                    expected: T,
-                                    util: MatcherUtils,
-                                    customEqualityTesters: CustomEqualityTesters) -> Result
-
 @Suppress("UnsafeCastFromDynamic")
-fun <T> matcher(name: String, compare: FullCompareFunction<T>): Matchers {
+fun <T> matcher(name: String, compare: (actual: T, expected: T, util: MatcherUtils, customEqualityTesters: CustomEqualityTesters) -> Result): Matchers {
 
     val matchers = js("({})")
     matchers[name] = { util: MatcherUtils, customEqualityTesters: CustomEqualityTesters ->
@@ -41,7 +33,24 @@ fun <T> matcher(name: String, compare: FullCompareFunction<T>): Matchers {
 }
 
 @Suppress("UnsafeCastFromDynamic")
-fun <T> matcher(name: String, compare: PartialCompareFunction<T>): Matchers {
+fun <T> matcher(name: String, compare: (actual: T, util: MatcherUtils, customEqualityTesters: CustomEqualityTesters) -> Result): Matchers {
+
+    val matchers = js("({})")
+    matchers[name] = { util: MatcherUtils, customEqualityTesters: CustomEqualityTesters ->
+
+        val matcher = js("({})")
+
+        matcher.compare = { actual: T ->
+            compare(actual, util, customEqualityTesters)
+        }
+
+        matcher
+    }
+    return matchers
+}
+
+@Suppress("UnsafeCastFromDynamic")
+fun <T> matcher(name: String, compare: (actual: T, expected: T) -> Result): Matchers {
 
     val matchers = js("({})")
     matchers[name] = {
@@ -50,6 +59,23 @@ fun <T> matcher(name: String, compare: PartialCompareFunction<T>): Matchers {
 
         matcher.compare = { actual: T, expected: T ->
             compare(actual, expected)
+        }
+
+        matcher
+    }
+    return matchers
+}
+
+@Suppress("UnsafeCastFromDynamic")
+fun <T> matcher(name: String, compare: (actual: T) -> Result): Matchers {
+
+    val matchers = js("({})")
+    matchers[name] = {
+
+        val matcher = js("({})")
+
+        matcher.compare = { actual: T ->
+            compare(actual)
         }
 
         matcher

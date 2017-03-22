@@ -1,8 +1,8 @@
 package jasmine
 
-external interface Expectations {
+external interface Expectations<in T> {
 
-    val not: Expectations
+    val not: Expectations<T>
 
     fun toBe(expected: Any?): Unit
 
@@ -20,4 +20,4 @@ external interface Expectations {
 }
 
 @JsName("expect")
-external fun expect(actual: Any?): Expectations
+external fun <T> expect(actual: T?): Expectations<T>
