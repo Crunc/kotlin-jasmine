@@ -1,3 +1,3 @@
-# Kotling Angular
+# Kotlin Jasmine
 
-Angular 2 for Kotlin
+Kotlin JS Jasmine Bindings
