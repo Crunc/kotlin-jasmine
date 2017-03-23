@@ -60,23 +60,23 @@ private val matchers = matchers {
             })
 }
 
-fun Expectations<String>.toBeFoo(): Unit {
+fun StringExpectations.toBeFoo(): Unit {
     this.asDynamic().toBeFoo()
 }
 
-fun Expectations<String>.toBeBar(): Unit {
+fun StringExpectations.toBeBar(): Unit {
     this.asDynamic().toBeBar()
 }
 
-fun Expectations<String>.toBeFoobar(): Unit {
+fun StringExpectations.toBeFoobar(): Unit {
     this.asDynamic().toBeFoobar()
 }
 
-fun Expectations<String>.toBeBaz(): Unit {
+fun StringExpectations.toBeBaz(): Unit {
     this.asDynamic().toBeBaz()
 }
 
-fun Expectations<Int>.times42ToEqual(expected: Int): Unit {
+fun IntExpectations.times42ToEqual(expected: Int): Unit {
     this.asDynamic().times42ToEqual(expected)
 }
 

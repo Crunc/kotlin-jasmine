@@ -75,8 +75,8 @@ private val spec = describe("expect") {
         }
 
         it("should compare object references") { ->
-            val something = js("({ x: 42 })")
-            val other = js("({ x: 21 })")
+            val something = "foo" to 42
+            val other = "foo" to 43
             expect(something).not.toEqual(other)
         }
 
@@ -383,10 +383,6 @@ private val spec = describe("expect") {
         it("should recognize Double.NaN") { ->
             expect(Double.NaN).toBeNaN()
         }
-
-        it("should recognize calculated NaN") { ->
-            expect(js("(0/0)")).toBeNaN()
-        }
     }
 
     describe("not.toBeNaN") {
@@ -399,19 +395,6 @@ private val spec = describe("expect") {
         it("should recognize floats") { ->
             expect(0.0).not.toBeNaN()
             expect(-0.1).not.toBeNaN()
-        }
-
-        it("should recognize strings") { ->
-            expect("").not.toBeNaN()
-        }
-
-        it("should recognize booleans") { ->
-            expect(true).not.toBeNaN()
-            expect(false).not.toBeNaN()
-        }
-
-        it("should recognize objects") { ->
-            expect(Any()).not.toBeNaN()
         }
     }
 
