@@ -9,6 +9,8 @@
     <version>2.5.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
+    <name>Kotlin Jasmine</name>
+
     <modules>
         <module>kotlin-jasmine-core</module>
     </modules>

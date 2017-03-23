@@ -12,7 +12,7 @@ module.exports = function (config) {
         ],
         files: [
             {pattern: './kotlin.js', watched: false},
-            {pattern: '../kotlin-jasmine-core.js', watched: false},
+            {pattern: '../js/kotlin-jasmine-core.js', watched: false},
             {pattern: './kotlin-jasmine-core-test.js', watched: false}
         ],
         proxies: {
@@ -23,7 +23,7 @@ module.exports = function (config) {
         },
         port: 8765,
         logLevel: config['LOG_INFO'],
-        browsers: ['Chrome'],
+        browsers: ['PhantomJS'],
         colors: false,
         singleRun: true
     })
