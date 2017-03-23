@@ -1,4 +1,4 @@
-module.exports = function foo(config) {
+module.exports = function (config) {
     config.set({
         basePath: '',
         frameworks: ['jasmine'],
@@ -11,10 +11,9 @@ module.exports = function foo(config) {
             require('karma-phantomjs-launcher')
         ],
         files: [
-            {pattern: main('lib/rxjs/Rx.js'), watched: false},
-            {pattern: test('kotlin.js'), watched: false},
-            {pattern: main('kotlin-jasmine-core.js'), watched: false},
-            {pattern: test('kotlin-jasmine-core-test.js'), watched: false}
+            {pattern: './kotlin.js', watched: false},
+            {pattern: '../kotlin-jasmine-core.js', watched: false},
+            {pattern: './kotlin-jasmine-core-test.js', watched: false}
         ],
         proxies: {
             '/': '/base'
@@ -29,11 +28,3 @@ module.exports = function foo(config) {
         singleRun: true
     })
 };
-
-function test(file) {
-    return './' + file;
-}
-
-function main(file) {
-    return '../js/' + file;
-}
