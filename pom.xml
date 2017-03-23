@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
 
     <name>Kotlin Jasmine</name>
+    <description>Kotlin JS Jasmine Bindings</description>
 
     <modules>
         <module>kotlin-jasmine-core</module>

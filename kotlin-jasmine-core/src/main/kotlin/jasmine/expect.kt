@@ -1,5 +1,7 @@
 package jasmine
 
+import kotlin.js.RegExp
+
 external interface Expectations<in T> {
 
     val not: Expectations<T>
@@ -8,15 +10,31 @@ external interface Expectations<in T> {
 
     fun toEqual(expected: Any?): Unit
 
-    fun toMatch(expected: String): Unit
+    fun toMatch(pattern: String): Unit
 
-    fun toBeNull(): Unit
+    fun toMatch(regex: RegExp): Unit
 
     fun toBeDefined(): Unit
+
+    fun toBeUndefined(): Unit
+
+    fun toBeNull(): Unit
 
     fun toBeTruthy(): Unit
 
     fun toBeFalsy(): Unit
+
+    fun toContain(value: String): Unit
+
+    fun toBeLessThan(value: Number): Unit
+
+    fun toBeGreaterThan(value: Number): Unit
+
+    fun toBeNaN(): Unit
+
+    fun toBeCloseTo(value: Number, precision: Number): Unit
+
+    fun toThrow(): Unit
 }
 
 @JsName("expect")
