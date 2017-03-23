@@ -24,7 +24,7 @@ external interface Expectations<in T> {
 
     fun toBeFalsy(): Unit
 
-    fun toContain(value: String): Unit
+    fun toContain(value: Any?): Unit
 
     fun toBeLessThan(value: Number): Unit
 
@@ -32,7 +32,7 @@ external interface Expectations<in T> {
 
     fun toBeNaN(): Unit
 
-    fun toBeCloseTo(value: Number, precision: Number): Unit
+    fun toBeCloseTo(value: Number, precision: Int): Unit
 
     fun toThrow(): Unit
 }
