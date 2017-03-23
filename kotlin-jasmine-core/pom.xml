@@ -15,8 +15,8 @@
         <relativePath/>
     </parent>
 
-    <name>Kotlin Jasmine</name>
-    <description>Kotlin JS Jasmine Bindings</description>
+    <name>Kotlin Jasmine Core</name>
+    <description>Kotlin JS Jasmine Core Bindings</description>
 
     <build>
         <resources>

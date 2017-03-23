@@ -1,43 +1,63 @@
 import jasmine.*
 
-private val toBeFoo = matcher<String>("toBeFoo") { actual, expected, util, customEqualityTesters ->
+private val matchers = matchers {
 
-    val pass = util.equals(actual, "foo", customEqualityTesters)
+    matcher(name = "toBeFoo",
+            compare = { actual: String, _: String, util, customTesters ->
 
-    when (pass) {
-        true -> Result(pass = true)
-        else -> Result(pass = false, message = "$actual is not Foo")
-    }
-}
+                val expected = "Foo"
+                val pass = util.equals(actual, expected, customTesters)
 
-private val toBeBar = matcher<String>("toBeBar") { actual, expected ->
+                when (pass) {
+                    true -> Result(pass = true)
+                    else -> Result(pass = false, message = util.buildFailureMessage("toBeFoo", false, actual, expected))
+                }
+            })
 
-    val pass = actual.equals("bar", ignoreCase = true)
+    matcher(name = "toBeBar",
+            compare = { actual: String, _: String ->
 
-    when (pass) {
-        true -> Result(pass = true)
-        else -> Result(pass = false, message = "$actual is not Bar")
-    }
-}
+                val pass = actual.equals("bar", ignoreCase = true)
 
-private val toBeFoobar = matcher<String>("toBeFoobar") { actual ->
+                when (pass) {
+                    true -> Result(pass = true)
+                    else -> Result(pass = false, message = "$actual is not Bar")
+                }
+            })
 
-    val pass = actual.equals("foobar", ignoreCase = true)
+    matcher(name = "toBeFoobar",
+            compare = { actual: String ->
 
-    when (pass) {
-        true -> Result(pass = true)
-        else -> Result(pass = false, message = "$actual is not Foobar")
-    }
-}
+                val pass = actual.equals("foobar", ignoreCase = true)
 
-private val toBeBaz = matcher<String>("toBeBaz") { actual, util, customEqualityTesters ->
+                when (pass) {
+                    true -> Result(pass = true)
+                    else -> Result(pass = false, message = "$actual is not Foobar")
+                }
+            })
 
-    val pass = util.equals(actual, "baz", customEqualityTesters)
+    matcher(name = "toBeBaz",
+            compare = { actual: String, util, customTesters ->
 
-    when (pass) {
-        true -> Result(pass = true)
-        else -> Result(pass = false, message = "$actual is not Baz")
-    }
+                val expected = "baz"
+                val pass = util.equals(actual, expected, customTesters)
+
+                when (pass) {
+                    true -> Result(pass = true)
+                    else -> Result(pass = false, message = util.buildFailureMessage("toBeBaz", false, actual, expected))
+                }
+            })
+
+    matcher(name = "times42ToEqual",
+            compare = { actual: Int, expected: Int, util, customTesters ->
+
+                val pass = util.equals(actual * 42, expected, customTesters)
+
+                when (pass) {
+                    true -> Result(pass = true)
+                    else -> Result(pass = false, message = util.buildFailureMessage("times42ToEqual", false, actual, expected))
+                }
+            })
 }
 
 fun Expectations<String>.toBeFoo(): Unit {
@@ -56,18 +76,19 @@ fun Expectations<String>.toBeBaz(): Unit {
     this.asDynamic().toBeBaz()
 }
 
+fun Expectations<Int>.times42ToEqual(expected: Int): Unit {
+    this.asDynamic().times42ToEqual(expected)
+}
+
 @Suppress("unused")
 private val spec = describe("matcher") {
 
     beforeEach {
-        jasmine.addMatchers(toBeFoo)
-        jasmine.addMatchers(toBeBar)
-        jasmine.addMatchers(toBeFoobar)
-        jasmine.addMatchers(toBeBaz)
+        jasmine.addMatchers(matchers)
     }
 
     it("should work") { ->
-        expect("foo").toBeFoo()
+        expect("Foo").toBeFoo()
         expect("bar").not.toBeFoo()
 
         expect("foo").not.toBeBar()
@@ -78,5 +99,8 @@ private val spec = describe("matcher") {
 
         expect("foobar").not.toBeBaz()
         expect("baz").toBeBaz()
+
+        expect(2).times42ToEqual(84)
+        expect(3).not.times42ToEqual(84)
     }
 }
