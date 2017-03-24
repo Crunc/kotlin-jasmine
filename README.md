@@ -2,7 +2,11 @@
 
 Kotlin JS Jasmine Bindings
 
+## [Guide](./docs/guide.md)
+
 ## Setup
+
+TODO
 
 
 ### Karma, Maven, frontend-maven-plugin
@@ -46,3 +50,4 @@ module.exports = function (config) {
     })
 };
 ```
+
