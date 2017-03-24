@@ -2,88 +2,127 @@ package jasmine
 
 import kotlin.js.RegExp
 
-external interface Expectations<in V, out E : Expectations<V, E>> {
+@JsName("expect")
+external fun <E> expect(actual: E?): Expectations<E>
 
-    val not: E
+external class Expectations<in E> {
 
-    fun toBe(expected: Any?): Unit
+    val not: Expectations<E>
 
-    fun toEqual(expected: Any?): Unit
+    // --- Any
 
-    fun toBeDefined(): Unit
+    @JsName("toBe")
+    internal fun _toBe(expected: Any?): Unit
 
-    fun toBeUndefined(): Unit
+    @JsName("toEqual")
+    internal fun _toEqual(expected: Any?): Unit
 
-    fun toBeNull(): Unit
+    @JsName("toBeDefined")
+    internal fun _toBeDefined(): Unit
 
-    fun toBeTruthy(): Unit
+    @JsName("toBeUndefined")
+    internal fun _toBeUndefined(): Unit
 
-    fun toBeFalsy(): Unit
+    @JsName("toBeNull")
+    internal fun _toBeNull(): Unit
 
-    fun toThrow(): Unit
+    @JsName("toBeTruthy")
+    internal fun _toBeTruthy(): Unit
+
+    @JsName("toBeFalsy")
+    internal fun _toBeFalsy(): Unit
+
+    // --- Functions
+
+    @JsName("toThrow")
+    internal fun _toThrow(): Unit
+
+    // --- Numbers
+
+    @JsName("toBeLessThan")
+    internal fun _toBeLessThan(value: Number): Unit
+
+    @JsName("toBeGreaterThan")
+    internal fun _toBeGreaterThan(value: Number): Unit
+
+    @JsName("toBeNaN")
+    internal fun _toBeNaN(): Unit
+
+    // --- Floats
+
+    @JsName("toBeCloseTo")
+    internal fun _toBeCloseTo(value: Number, precision: Int): Unit
+
+    // --- Strings
+
+    @JsName("toMatch")
+    internal fun _toMatch(pattern: String): Unit
+
+    @JsName("toMatch")
+    internal fun _toMatch(regex: RegExp): Unit
+
+    // --- Arrays
+
+    @JsName("toContain")
+    internal fun _toContain(value: Any?): Unit
 }
 
-external interface AnyExpectations : Expectations<Any, AnyExpectations>
+fun <E : Any> Expectations<E>.toBe(expected: Any?): Unit
+        = this._toBe(expected)
 
-external interface NumberExpectations<in V : Number, out E : NumberExpectations<V, E>> : Expectations<V, E> {
+fun <E : Any> Expectations<E>.toEqual(expected: Any?): Unit
+        = this._toEqual(expected)
 
-    fun toBeLessThan(value: Number): Unit
+fun <E : Any> Expectations<E>.toBeDefined(): Unit
+        = this._toBeDefined()
 
-    fun toBeGreaterThan(value: Number): Unit
+fun <E : Any> Expectations<E>.toBeUndefined(): Unit
+        = this._toBeUndefined()
 
-    fun toBeNaN(): Unit
-}
+fun <E : Any> Expectations<E>.toBeNull(): Unit
+        = this._toBeNull()
 
-external interface IntExpectations : NumberExpectations<Int, IntExpectations>
+fun <E : Any> Expectations<E>.toBeTruthy(): Unit
+        = this._toBeTruthy()
 
-external interface FloatExpectations : NumberExpectations<Float, FloatExpectations> {
+fun <E : Any> Expectations<E>.toBeFalsy(): Unit
+        = this._toBeFalsy()
 
-    fun toBeCloseTo(value: Number, precision: Int): Unit
-}
+fun <E : Function<Any>> Expectations<E>.toThrow(): Unit
+        = this._toThrow()
 
-external interface DoubleExpectations : NumberExpectations<Double, DoubleExpectations> {
+fun <E : Number> Expectations<E>.toBeLessThan(expected: Number): Unit
+        = this._toBeLessThan(expected)
 
-    fun toBeCloseTo(value: Number, precision: Int): Unit
-}
+fun <E : Number> Expectations<E>.toBeGreaterThan(expected: Number): Unit
+        = this._toBeGreaterThan(expected)
 
-external interface StringExpectations : Expectations<String, StringExpectations> {
+fun <E : Number> Expectations<E>.toBeNaN(): Unit
+        = this._toBeNaN()
 
-    fun toMatch(pattern: String): Unit
+fun <E : Number> Expectations<E>.toBeCloseTo(expected: Number, precision: Int): Unit
+        = this._toBeCloseTo(expected, precision)
 
-    fun toMatch(regex: RegExp): Unit
+fun Expectations<String>.toMatch(pattern: String): Unit
+        = this._toMatch(pattern)
 
-    fun toContain(value: String?): Unit
+fun Expectations<String>.toMatch(regex: RegExp): Unit
+        = this._toMatch(regex)
 
-}
+fun Expectations<String>.toContain(value: String): Unit
+        = this._toContain(value)
 
-external interface ArrayExpectations<in T> : Expectations<Array<out T>, ArrayExpectations<T>> {
+fun <E : Array<out Any>> Expectations<E>.toContain(value: Any?): Unit
+        = this._toContain(value)
 
-    fun toContain(value: T?): Unit
-}
+@Suppress("UnsafeCastFromDynamic")
+fun <E> Expectations<E>.match(matcherName: String): Unit
+        = (this.asDynamic()[matcherName])()
 
-@JsName("expect")
-external fun expect(actual: Any?): AnyExpectations
+@Suppress("UnsafeCastFromDynamic")
+fun <E> Expectations<E>.match(matcherName: String, expected: Any?): Unit
+        = (this.asDynamic()[matcherName])(expected)
 
-@JsName("expect")
-external fun expect(actual: Nothing?): AnyExpectations
-
-@JsName("expect")
-external fun expect(actual: Unit?): AnyExpectations
-
-@JsName("expect")
-external fun expect(actual: Int?): IntExpectations
-
-@JsName("expect")
-external fun expect(actual: Float?): FloatExpectations
-
-@JsName("expect")
-external fun expect(actual: Double?): DoubleExpectations
-
-@JsName("expect")
-external fun expect(actual: String?): StringExpectations
-
-@JsName("expect")
-external fun <T> expect(actual: Array<out T>?): ArrayExpectations<T>
-
-//@JsName("expect")
-//external fun expect(actual: dynamic): AnyExpectations
+@Suppress("UnsafeCastFromDynamic")
+fun <E> Expectations<E>.match(matcherName: String, expected: Any?, context: Any?): Unit
+        = (this.asDynamic()[matcherName])(expected, context)

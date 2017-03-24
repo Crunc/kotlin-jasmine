@@ -43,6 +43,7 @@ fun matchers(matcherFactories: MatcherDefinitions.() -> Unit): Matchers {
 /**
  * The result of a matcher compare function.
  */
+@Suppress("unused")
 class Result(val pass: Boolean, val message: String? = null)
 
 /**
@@ -56,6 +57,11 @@ interface MatcherDefinitions {
     val matchers: Matchers
 
     /**
+     * Defines a new matcher that compares an actual value to an expected value  using the given context value, [MatcherUtils] and [CustomEqualityTesters].
+     */
+    fun <T, C> matcher(name: String, compare: (actual: T, expected: T, context: C, util: MatcherUtils, customTesters: CustomEqualityTesters) -> Result): Unit
+
+    /**
      * Defines a new matcher that compares an actual value to an expected value using [MatcherUtils] and [CustomEqualityTesters].
      */
     fun <T> matcher(name: String, compare: (actual: T, expected: T, util: MatcherUtils, customTesters: CustomEqualityTesters) -> Result): Unit
@@ -64,6 +70,11 @@ interface MatcherDefinitions {
      * Defines a new matcher that checks an actual value using [MatcherUtils] and [CustomEqualityTesters].
      */
     fun <T> matcher(name: String, compare: (actual: T, util: MatcherUtils, customTesters: CustomEqualityTesters) -> Result): Unit
+
+    /**
+     * Defines a new matcher that compares an actual value to an expected value using the given context value.
+     */
+    fun <T, C> matcher(name: String, compare: (actual: T, expected: T, context: C) -> Result): Unit
 
     /**
      * Defines a new matcher that compares an actual value to an expected value.
@@ -90,6 +101,19 @@ private class DynamicMatcherDefinitions : MatcherDefinitions {
     override val matchers: Matchers
         get() = matcherDefinitions
 
+    override fun <T, C> matcher(name: String, compare: (actual: T, expected: T, context: C, util: MatcherUtils, customEqualityTesters: CustomEqualityTesters) -> Result): Unit {
+        matcherDefinitions[name] = { util: MatcherUtils, customEqualityTesters: CustomEqualityTesters ->
+
+            val matcher = js("({})")
+
+            matcher.compare = { actual: T, expected: T, context: C ->
+                compare(actual, expected, context, util, customEqualityTesters)
+            }
+
+            matcher
+        }
+    }
+
     override fun <T> matcher(name: String, compare: (actual: T, expected: T, util: MatcherUtils, customEqualityTesters: CustomEqualityTesters) -> Result): Unit {
         matcherDefinitions[name] = { util: MatcherUtils, customEqualityTesters: CustomEqualityTesters ->
 
@@ -110,6 +134,19 @@ private class DynamicMatcherDefinitions : MatcherDefinitions {
 
             matcher.compare = { actual: T ->
                 compare(actual, util, customEqualityTesters)
+            }
+
+            matcher
+        }
+    }
+
+    override fun <T, C> matcher(name: String, compare: (actual: T, expected: T, context: C) -> Result): Unit {
+        matcherDefinitions[name] = { _, _ ->
+
+            val matcher = js("({})")
+
+            matcher.compare = { actual: T, expected: T, context: C ->
+                compare(actual, expected, context)
             }
 
             matcher

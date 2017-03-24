@@ -37,7 +37,7 @@ private val matchers = matchers {
             })
 
     matcher(name = "toBeBaz",
-            compare = { actual: String, util, customTesters ->
+            compare = { actual: String, util: MatcherUtils, customTesters: CustomEqualityTesters ->
 
                 val expected = "baz"
                 val pass = util.equals(actual, expected, customTesters)
@@ -49,7 +49,7 @@ private val matchers = matchers {
             })
 
     matcher(name = "times42ToEqual",
-            compare = { actual: Int, expected: Int, util, customTesters ->
+            compare = { actual: Int, expected: Int, util: MatcherUtils, customTesters: CustomEqualityTesters ->
 
                 val pass = util.equals(actual * 42, expected, customTesters)
 
@@ -58,27 +58,50 @@ private val matchers = matchers {
                     else -> Result(pass = false, message = util.buildFailureMessage("times42ToEqual", false, actual, expected))
                 }
             })
+
+    matcher(name = "toBeProductOf",
+            compare = { actual: Double, expected: Double, context: Double ->
+
+                val pass = actual == expected * context
+
+                when (pass) {
+                    true -> Result(pass = true)
+                    else -> Result(pass = false, message = "$actual is not the product of $expected * $context")
+                }
+            })
+
+    matcher(name = "toBeSumOf",
+            compare = { actual: Int, expected: Int, context: Int, util, customTesters ->
+
+                val pass = util.equals(actual, expected + context, customTesters)
+
+                when (pass) {
+                    true -> Result(pass = true)
+                    else -> Result(pass = false, message = util.buildFailureMessage("toBeSumOf", false, actual, expected, context))
+                }
+            })
 }
 
-fun StringExpectations.toBeFoo(): Unit {
-    this.asDynamic().toBeFoo()
-}
+fun Expectations<String>.toBeFoo(): Unit
+        = match("toBeFoo")
 
-fun StringExpectations.toBeBar(): Unit {
-    this.asDynamic().toBeBar()
-}
+fun Expectations<String>.toBeBar(): Unit
+        = match("toBeBar")
 
-fun StringExpectations.toBeFoobar(): Unit {
-    this.asDynamic().toBeFoobar()
-}
+fun Expectations<String>.toBeFoobar(): Unit
+        = match("toBeFoobar")
 
-fun StringExpectations.toBeBaz(): Unit {
-    this.asDynamic().toBeBaz()
-}
+fun Expectations<String>.toBeBaz(): Unit
+        = match("toBeBaz")
 
-fun IntExpectations.times42ToEqual(expected: Int): Unit {
-    this.asDynamic().times42ToEqual(expected)
-}
+fun Expectations<Int>.times42ToEqual(expected: Int): Unit
+        = match("times42ToEqual", expected)
+
+fun Expectations<Double>.toBeProductOf(factor1: Double, factor2: Double): Unit
+        = match("toBeProductOf", factor1, factor2)
+
+fun Expectations<Int>.toBeSumOf(op1: Int, op2: Int): Unit
+        = match("toBeSumOf", op1, op2)
 
 @Suppress("unused")
 private val spec = describe("matcher") {
@@ -87,20 +110,101 @@ private val spec = describe("matcher") {
         jasmine.addMatchers(matchers)
     }
 
-    it("should work") { ->
-        expect("Foo").toBeFoo()
-        expect("bar").not.toBeFoo()
+    describe("toBeFoo") {
 
-        expect("foo").not.toBeBar()
-        expect("BAR").toBeBar()
+        it("should work") { ->
+            expect("Foo").toBeFoo()
+        }
+    }
 
-        expect("baz").not.toBeFoobar()
-        expect("FooBar").toBeFoobar()
+    describe("not.toBeFoo") {
 
-        expect("foobar").not.toBeBaz()
-        expect("baz").toBeBaz()
+        it("should work") { ->
+            expect("bar").not.toBeFoo()
+        }
+    }
 
-        expect(2).times42ToEqual(84)
-        expect(3).not.times42ToEqual(84)
+    describe("toBeBar") {
+
+        it("should work") { ->
+            expect("BAR").toBeBar()
+        }
+    }
+
+    describe("not.toBeBar") {
+
+        it("should work") { ->
+            expect("foo").not.toBeBar()
+        }
+    }
+
+    describe("toBeFoobar") {
+
+        it("should work") { ->
+            expect("FooBar").toBeFoobar()
+        }
+    }
+
+    describe("not.toBeFoobar") {
+
+        it("should work") { ->
+            expect("baz").not.toBeFoobar()
+        }
+    }
+
+    describe("toBeBaz") {
+
+        it("should work") { ->
+            expect("baz").toBeBaz()
+        }
+    }
+
+    describe("not.toBeBaz") {
+
+        it("should work") { ->
+            expect("foobar").not.toBeBaz()
+        }
+    }
+
+    describe("times42ToEqual") {
+
+        it("should work") { ->
+            expect(2).times42ToEqual(84)
+        }
+    }
+
+    describe("not.times42ToEqual") {
+
+        it("should work") { ->
+            expect(3).not.times42ToEqual(84)
+        }
+    }
+
+    describe("toBeProductOf") {
+
+        it("should work") { ->
+            expect(16.0).toBeProductOf(4.0, 4.0)
+        }
+    }
+
+    describe("not.toBeProductOf") {
+
+        it("should work") { ->
+            expect(16.1).not.toBeProductOf(4.0, 4.0)
+        }
+    }
+
+    describe("toBeSumOf") {
+
+        it("should work") { ->
+            expect(42).toBeSumOf(40, 2)
+        }
+    }
+
+    describe("not.toBeSumOf") {
+
+        it("should work") { ->
+            expect(42).not.toBeSumOf(40, 1)
+        }
     }
 }
