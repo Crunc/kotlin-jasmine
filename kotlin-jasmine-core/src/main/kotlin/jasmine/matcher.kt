@@ -3,12 +3,12 @@ package jasmine
 /**
  * An object that contains matcher names as property keys and matcher factory functions as values.
  */
-external interface Matchers
+external interface MatcherRegistrations
 
 /**
  * Jasmine matcher utils.
  */
-external interface MatcherUtils {
+external internal interface MatcherUtils {
 
     /**
      * Compares two values for equality using custom equality testers.
@@ -34,10 +34,10 @@ external interface CustomEqualityTesters
 /**
  * DSL entry point for defining custom matchers.
  */
-fun matchers(matcherFactories: MatcherDefinitions.() -> Unit): Matchers {
+fun matchers(matcherFactories: MatcherDefinitions.() -> Unit): MatcherRegistrations {
     val definitions = DynamicMatcherDefinitions()
     definitions.matcherFactories()
-    return definitions.matchers
+    return definitions.matcherRegistrations
 }
 
 /**
@@ -47,6 +47,50 @@ fun matchers(matcherFactories: MatcherDefinitions.() -> Unit): Matchers {
 class Result(val pass: Boolean, val message: String? = null)
 
 /**
+ * Receiver for matcher compare functions.
+ */
+interface Comparison {
+
+    fun pass(): Result
+    fun fail(actual: Any?): Result
+    fun fail(actual: Any?, vararg expected: Any?): Result
+    fun failWithMessage(message: String): Result
+
+    fun equals(actual: Any?, expected: Any?): Boolean
+    fun contains(haystack: Any?, needle: Any?): Boolean
+}
+
+private sealed class BaseComparison(private val matcherName: String,
+                                    private val util: MatcherUtils,
+                                    private val customTesters: CustomEqualityTesters,
+                                    private val isNot: Boolean) : Comparison {
+
+    override fun pass(): Result =
+            Result(pass = true)
+
+    override fun fail(actual: Any?): Result =
+            Result(pass = false, message = util.buildFailureMessage(matcherName, isNot, actual))
+
+    override fun fail(actual: Any?, vararg expected: Any?): Result =
+            Result(pass = false, message = util.buildFailureMessage(matcherName, isNot, actual, expected))
+
+    override fun failWithMessage(message: String): Result =
+            Result(pass = false, message = message)
+
+    override fun equals(actual: Any?, expected: Any?): Boolean =
+            util.equals(actual, expected, customTesters)
+
+    override fun contains(haystack: Any?, needle: Any?): Boolean =
+            util.contains(haystack, needle, customTesters)
+
+}
+
+private class PositiveComparison(
+        matcherName: String,
+        util: MatcherUtils,
+        customTesters: CustomEqualityTesters) : BaseComparison(matcherName, util, customTesters, false)
+
+/**
  * DSL for defining custom Jasmine matchers.
  */
 interface MatcherDefinitions {
@@ -54,37 +98,22 @@ interface MatcherDefinitions {
     /**
      * All defined matchers
      */
-    val matchers: Matchers
-
-    /**
-     * Defines a new matcher that compares an actual value to an expected value  using the given context value, [MatcherUtils] and [CustomEqualityTesters].
-     */
-    fun <T, C> matcher(name: String, compare: (actual: T, expected: T, context: C, util: MatcherUtils, customTesters: CustomEqualityTesters) -> Result): Unit
-
-    /**
-     * Defines a new matcher that compares an actual value to an expected value using [MatcherUtils] and [CustomEqualityTesters].
-     */
-    fun <T> matcher(name: String, compare: (actual: T, expected: T, util: MatcherUtils, customTesters: CustomEqualityTesters) -> Result): Unit
-
-    /**
-     * Defines a new matcher that checks an actual value using [MatcherUtils] and [CustomEqualityTesters].
-     */
-    fun <T> matcher(name: String, compare: (actual: T, util: MatcherUtils, customTesters: CustomEqualityTesters) -> Result): Unit
+    val matcherRegistrations: MatcherRegistrations
 
     /**
      * Defines a new matcher that compares an actual value to an expected value using the given context value.
      */
-    fun <T, C> matcher(name: String, compare: (actual: T, expected: T, context: C) -> Result): Unit
+    fun <T, C> matcher(name: String, compare: Comparison.(actual: T, expected: T, context: C) -> Result): Unit
 
     /**
      * Defines a new matcher that compares an actual value to an expected value.
      */
-    fun <T> matcher(name: String, compare: (actual: T, expected: T) -> Result): Unit
+    fun <T> matcher(name: String, compare: Comparison.(actual: T, expected: T) -> Result): Unit
 
     /**
      * Defines a new matcher that checks an actual value.
      */
-    fun <T> matcher(name: String, compare: (actual: T) -> Result): Unit
+    fun <T> matcher(name: String, compare: Comparison.(actual: T) -> Result): Unit
 }
 
 /**
@@ -98,81 +127,48 @@ private class DynamicMatcherDefinitions : MatcherDefinitions {
     private val matcherDefinitions: dynamic = js("({})")
 
     @Suppress("UnsafeCastFromDynamic")
-    override val matchers: Matchers
+    override val matcherRegistrations: MatcherRegistrations
         get() = matcherDefinitions
 
-    override fun <T, C> matcher(name: String, compare: (actual: T, expected: T, context: C, util: MatcherUtils, customEqualityTesters: CustomEqualityTesters) -> Result): Unit {
+    override fun <T, C> matcher(name: String, compare: Comparison.(actual: T, expected: T, context: C) -> Result): Unit {
+
         matcherDefinitions[name] = { util: MatcherUtils, customEqualityTesters: CustomEqualityTesters ->
 
             val matcher = js("({})")
 
             matcher.compare = { actual: T, expected: T, context: C ->
-                compare(actual, expected, context, util, customEqualityTesters)
+                PositiveComparison(name, util, customEqualityTesters)
+                        .compare(actual, expected, context)
             }
 
             matcher
         }
     }
 
-    override fun <T> matcher(name: String, compare: (actual: T, expected: T, util: MatcherUtils, customEqualityTesters: CustomEqualityTesters) -> Result): Unit {
+    override fun <T> matcher(name: String, compare: Comparison.(actual: T, expected: T) -> Result): Unit {
+
         matcherDefinitions[name] = { util: MatcherUtils, customEqualityTesters: CustomEqualityTesters ->
 
             val matcher = js("({})")
 
             matcher.compare = { actual: T, expected: T ->
-                compare(actual, expected, util, customEqualityTesters)
+                PositiveComparison(name, util, customEqualityTesters)
+                        .compare(actual, expected)
             }
 
             matcher
         }
     }
 
-    override fun <T> matcher(name: String, compare: (actual: T, util: MatcherUtils, customEqualityTesters: CustomEqualityTesters) -> Result): Unit {
+    override fun <T> matcher(name: String, compare: Comparison.(actual: T) -> Result): Unit {
+
         matcherDefinitions[name] = { util: MatcherUtils, customEqualityTesters: CustomEqualityTesters ->
 
             val matcher = js("({})")
 
             matcher.compare = { actual: T ->
-                compare(actual, util, customEqualityTesters)
-            }
-
-            matcher
-        }
-    }
-
-    override fun <T, C> matcher(name: String, compare: (actual: T, expected: T, context: C) -> Result): Unit {
-        matcherDefinitions[name] = { _, _ ->
-
-            val matcher = js("({})")
-
-            matcher.compare = { actual: T, expected: T, context: C ->
-                compare(actual, expected, context)
-            }
-
-            matcher
-        }
-    }
-
-    override fun <T> matcher(name: String, compare: (actual: T, expected: T) -> Result): Unit {
-        matcherDefinitions[name] = { _, _ ->
-
-            val matcher = js("({})")
-
-            matcher.compare = { actual: T, expected: T ->
-                compare(actual, expected)
-            }
-
-            matcher
-        }
-    }
-
-    override fun <T> matcher(name: String, compare: (actual: T) -> Result): Unit {
-        matcherDefinitions[name] = { _, _ ->
-
-            val matcher = js("({})")
-
-            matcher.compare = { actual: T ->
-                compare(actual)
+                PositiveComparison(name, util, customEqualityTesters)
+                        .compare(actual)
             }
 
             matcher

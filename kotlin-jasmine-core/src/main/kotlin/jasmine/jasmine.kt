@@ -2,7 +2,7 @@ package jasmine
 
 external interface Jasmine {
 
-    fun addMatchers(matchers: Matchers)
+    fun addMatchers(matcherRegistrations: MatcherRegistrations)
 }
 
 @JsName("jasmine")

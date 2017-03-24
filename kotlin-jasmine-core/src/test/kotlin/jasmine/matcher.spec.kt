@@ -1,112 +1,101 @@
 import jasmine.*
 
+private const val toBeFoo = "toBeFoo"
+
 private val matchers = matchers {
 
-    matcher(name = "toBeFoo",
-            compare = { actual: String, _: String, util, customTesters ->
+    matcher(toBeFoo) { actual: String ->
 
-                val expected = "Foo"
-                val pass = util.equals(actual, expected, customTesters)
+        val expected = "Foo"
 
-                when (pass) {
-                    true -> Result(pass = true)
-                    else -> Result(pass = false, message = util.buildFailureMessage("toBeFoo", false, actual, expected))
-                }
-            })
+        when (equals(actual, expected)) {
+            true -> pass()
+            else -> fail(actual, expected)
+        }
+    }
 
     matcher(name = "toBeBar",
-            compare = { actual: String, _: String ->
+            compare = { actual: String ->
 
-                val pass = actual.equals("bar", ignoreCase = true)
-
-                when (pass) {
-                    true -> Result(pass = true)
-                    else -> Result(pass = false, message = "$actual is not Bar")
+                when (actual.equals("bar", ignoreCase = true)) {
+                    true -> pass()
+                    else -> failWithMessage("$actual is not Bar")
                 }
             })
 
     matcher(name = "toBeFoobar",
             compare = { actual: String ->
 
-                val pass = actual.equals("foobar", ignoreCase = true)
-
-                when (pass) {
-                    true -> Result(pass = true)
-                    else -> Result(pass = false, message = "$actual is not Foobar")
+                when (actual.equals("foobar", ignoreCase = true)) {
+                    true -> pass()
+                    else -> failWithMessage("$actual is not Foobar")
                 }
             })
 
     matcher(name = "toBeBaz",
-            compare = { actual: String, util: MatcherUtils, customTesters: CustomEqualityTesters ->
+            compare = { actual: String ->
 
                 val expected = "baz"
-                val pass = util.equals(actual, expected, customTesters)
 
-                when (pass) {
-                    true -> Result(pass = true)
-                    else -> Result(pass = false, message = util.buildFailureMessage("toBeBaz", false, actual, expected))
+                when (equals(actual, expected)) {
+                    true -> pass()
+                    else -> fail(actual, expected)
                 }
             })
 
     matcher(name = "times42ToEqual",
-            compare = { actual: Int, expected: Int, util: MatcherUtils, customTesters: CustomEqualityTesters ->
+            compare = { actual: Int, expected: Int ->
 
-                val pass = util.equals(actual * 42, expected, customTesters)
-
-                when (pass) {
-                    true -> Result(pass = true)
-                    else -> Result(pass = false, message = util.buildFailureMessage("times42ToEqual", false, actual, expected))
+                when (equals(actual * 42, expected)) {
+                    true -> pass()
+                    else -> fail(actual, expected)
                 }
             })
 
     matcher(name = "toBeProductOf",
             compare = { actual: Double, expected: Double, context: Double ->
 
-                val pass = actual == expected * context
-
-                when (pass) {
-                    true -> Result(pass = true)
-                    else -> Result(pass = false, message = "$actual is not the product of $expected * $context")
+                when (actual == expected * context) {
+                    true -> pass()
+                    else -> failWithMessage("$actual is not the product of $expected * $context")
                 }
             })
 
     matcher(name = "toBeSumOf",
-            compare = { actual: Int, expected: Int, context: Int, util, customTesters ->
+            compare = { actual: Int, expected: Int, context: Int ->
 
-                val pass = util.equals(actual, expected + context, customTesters)
-
-                when (pass) {
-                    true -> Result(pass = true)
-                    else -> Result(pass = false, message = util.buildFailureMessage("toBeSumOf", false, actual, expected, context))
+                when (equals(actual, expected + context)) {
+                    true -> pass()
+                    else -> fail(actual, expected, context)
                 }
             })
 }
 
-fun Expectations<String>.toBeFoo(): Unit
-        = match("toBeFoo")
+private fun Expectations<String>.toBeFoo(): Unit
+        = match(toBeFoo)
 
-fun Expectations<String>.toBeBar(): Unit
+private fun Expectations<String>.toBeBar(): Unit
         = match("toBeBar")
 
-fun Expectations<String>.toBeFoobar(): Unit
+private fun Expectations<String>.toBeFoobar(): Unit
         = match("toBeFoobar")
 
-fun Expectations<String>.toBeBaz(): Unit
+private fun Expectations<String>.toBeBaz(): Unit
         = match("toBeBaz")
 
-fun Expectations<Int>.times42ToEqual(expected: Int): Unit
+private fun Expectations<Int>.times42ToEqual(expected: Int): Unit
         = match("times42ToEqual", expected)
 
-fun Expectations<Double>.toBeProductOf(factor1: Double, factor2: Double): Unit
+private fun Expectations<Double>.toBeProductOf(factor1: Double, factor2: Double): Unit
         = match("toBeProductOf", factor1, factor2)
 
-fun Expectations<Int>.toBeSumOf(op1: Int, op2: Int): Unit
+private fun Expectations<Int>.toBeSumOf(op1: Int, op2: Int): Unit
         = match("toBeSumOf", op1, op2)
 
 @Suppress("unused")
 private val spec = describe("matcher") {
 
-    beforeEach {
+    beforeEach { ->
         jasmine.addMatchers(matchers)
     }
 
