@@ -11,9 +11,11 @@ module.exports = function (config) {
             require('karma-phantomjs-launcher')
         ],
         files: [
-            {pattern: './kotlin.js', watched: false},
-            {pattern: '../js/kotlin-jasmine-core.js', watched: false},
-            {pattern: './kotlin-jasmine-core-test.js', watched: false}
+            {pattern: './node_modules/requirejs/require.js', watched: false},
+            {pattern: './node_modules/karma-requirejs/lib/adapter.js', watched: false},
+            {pattern: './../js/**/!(*.meta).js', watched: false},
+            {pattern: './!(test-main|karma.conf|*.meta).js', watched: false},
+            {pattern: './test-main.js', watched: false}
         ],
         proxies: {
             '/': '/base'

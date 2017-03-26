@@ -5,11 +5,13 @@
   "dependencies": {
     "karma": "1.4.1",
     "karma-jasmine": "1.1.0",
+    "karma-requirejs": "1.1.0",
     "karma-chrome-launcher": "2.0.0",
     "karma-firefox-launcher": "1.0.1",
     "karma-safari-launcher": "1.0.0",
     "karma-ie-launcher": "1.0.0",
     "karma-phantomjs-launcher": "1.0.4",
-    "jasmine-core": "2.5.2"
+    "jasmine-core": "2.5.2",
+    "requirejs": "2.3.3"
   }
 }

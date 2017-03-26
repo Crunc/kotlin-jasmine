@@ -15,18 +15,23 @@
         <relativePath/>
     </parent>
 
+    <properties>
+        <kotlin.js.moduleKind>amd</kotlin.js.moduleKind>
+        <kotlin.js.test.moduleKind>amd</kotlin.js.test.moduleKind>
+    </properties>
+
     <name>Kotlin Jasmine Core</name>
     <description>Kotlin JS Jasmine Core Bindings</description>
 
-    <build>
-        <resources>
-            <resource>
-                <directory>${node_modules}/jasmine-core/lib/jasmine-core</directory>
-                <targetPath>${project.build.outputDirectory}/lib/jasmine-core</targetPath>
-                <includes>
-                    <include>jasmine.js</include>
-                </includes>
-            </resource>
-        </resources>
-    </build>
+    <!--<build>-->
+        <!--<resources>-->
+            <!--<resource>-->
+                <!--<directory>${node_modules}/jasmine-core/lib/jasmine-core</directory>-->
+                <!--<targetPath>${project.build.outputDirectory}/lib/jasmine-core</targetPath>-->
+                <!--<includes>-->
+                    <!--<include>jasmine.js</include>-->
+                <!--</includes>-->
+            <!--</resource>-->
+        <!--</resources>-->
+    <!--</build>-->
 </project>
