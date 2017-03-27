@@ -15,6 +15,7 @@ module.exports = function (config) {
             {pattern: './node_modules/karma-requirejs/lib/adapter.js', watched: false},
             {pattern: './../js/**/!(*.meta).js', watched: false},
             {pattern: './!(test-main|karma.conf|*.meta).js', watched: false},
+            {pattern: './!(node_modules|node)/!(*.meta).js', watched: false},
             {pattern: './test-main.js', watched: false}
         ],
         proxies: {
