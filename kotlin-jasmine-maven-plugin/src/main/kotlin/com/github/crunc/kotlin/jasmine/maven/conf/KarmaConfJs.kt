@@ -1,4 +1,4 @@
-package com.github.crunc.kotlin.jasmin.maven
+package com.github.crunc.kotlin.jasmine.maven.conf
 
 class KarmaConfJs(
         val basePath: String = "",
@@ -17,8 +17,7 @@ class KarmaConfJs(
                 KarmaFile(pattern = "./test-main.js", watched = false)
         ),
         val port: Int = 9876,
-        val browsers: List<Browser> = listOf(Browser.PhantomJS)
-
+        val browsers: List<KarmaBrowser> = listOf(KarmaBrowser.PhantomJS)
 ) {
 
     fun toScript(): String = """module.exports = function (config) {
@@ -47,42 +46,4 @@ class KarmaConfJs(
 
     private fun jsArrayOf(elements: Iterable<JsValue>, indentation: String = "\n      ", beforeFirst: String = indentation, afterLast: String = "\n    ") =
             "[$beforeFirst${elements.map { it.toJs() }.joinToString(separator = ",$indentation")}$afterLast]"
-}
-
-interface JsValue {
-    fun toJs(): String
-}
-
-class KarmaFramework(val framework: String) : JsValue {
-    override fun toJs() = "'$framework'"
-}
-
-class KarmaPlugin(val plugin: String) : JsValue {
-    override fun toJs() = "require('$plugin')"
-}
-
-class KarmaFile(val pattern: String,
-                val watched: Boolean = false,
-                val included: Boolean = true,
-                val served: Boolean = true,
-                val nocache: Boolean = false) : JsValue {
-
-    override fun toJs() = "{ pattern: '$pattern', watched: $watched, included: $included, served: $served , nocache: $nocache }"
-}
-
-enum class Browser(val browser: String, val plugin: String) : JsValue {
-
-    Chrome("Chrome", "karma-chrome-launcher"),
-
-    Firefox("Firefox", "karma-firefox-launcher"),
-
-    Safari("Safari", "karma-safari-launcher'"),
-
-    InternetExplorer("IE", "karma-ie-launcher"),
-
-    PhantomJS("PhantomJS", "karma-phantomjs-launcher");
-
-    override fun toJs() = "'$browser'"
-
-    fun toPlugin() = KarmaPlugin(plugin)
 }

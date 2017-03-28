@@ -15,19 +15,19 @@
     </properties>
 
     <build>
+
+        <testOutputDirectory>${project.build.directory}/test-js</testOutputDirectory>
+
         <plugins>
             <plugin>
                 <groupId>@project.groupId@</groupId>
                 <artifactId>@project.artifactId@</artifactId>
                 <version>@project.version@</version>
-                <configuration>
-                    <outputDirectory>${project.build.directory}/test-js</outputDirectory>
-                </configuration>
                 <executions>
                     <execution>
                         <phase>generate-test-resources</phase>
                         <goals>
-                            <goal>generate</goal>
+                            <goal>generate-karma-conf</goal>
                         </goals>
                     </execution>
                 </executions>
