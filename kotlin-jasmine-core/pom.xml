@@ -33,12 +33,12 @@
                 <!--</includes>-->
             <!--</resource>-->
         <!--</resources>-->
-        <plugins>
-            <plugin>
-                <groupId>com.github.crunc</groupId>
-                <artifactId>kotlin-jasmine-maven-plugin</artifactId>
-                <version>${project.version}</version>
-            </plugin>
-        </plugins>
+        <!--<plugins>-->
+            <!--<plugin>-->
+                <!--<groupId>com.github.crunc</groupId>-->
+                <!--<artifactId>kotlin-jasmine-maven-plugin</artifactId>-->
+                <!--<version>${project.version}</version>-->
+            <!--</plugin>-->
+        <!--</plugins>-->
     </build>
 </project>

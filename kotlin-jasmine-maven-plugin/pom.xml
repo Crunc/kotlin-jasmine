@@ -54,7 +54,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.0.2</version>
+                <version>3.6.1</version>
                 <configuration>
                     <skip>true</skip>
                 </configuration>
@@ -113,6 +113,7 @@
                     <postBuildHookScript>verify</postBuildHookScript>
                     <addTestClassPath>true</addTestClassPath>
                     <streamLogs>true</streamLogs>
+                    <javaHome>/Library/Java/JavaVirtualMachines/jdk1.8.0_77.jdk/Contents/Home</javaHome>
                 </configuration>
                 <executions>
                     <execution>

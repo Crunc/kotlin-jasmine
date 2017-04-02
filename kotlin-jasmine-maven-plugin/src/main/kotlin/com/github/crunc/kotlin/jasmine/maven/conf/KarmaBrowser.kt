@@ -1,18 +1,33 @@
 package com.github.crunc.kotlin.jasmine.maven.conf
 
-enum class KarmaBrowser(val browser: String, val plugin: String) : JsValue {
+import com.github.crunc.kotlin.jasmine.maven.node.PackageDependency
 
-    Chrome("Chrome", "karma-chrome-launcher"),
+enum class KarmaBrowser(val browser: String, val dependency: PackageDependency) : JsValue {
 
-    Firefox("Firefox", "karma-firefox-launcher"),
+    Chrome("Chrome", PackageDependency.KarmaChromeLauncher),
 
-    Safari("Safari", "karma-safari-launcher'"),
+    Firefox("Firefox", PackageDependency.KarmaFirefoxLauncher),
 
-    InternetExplorer("IE", "karma-ie-launcher"),
+    Safari("Safari", PackageDependency.KarmaSafariLauncher),
 
-    PhantomJS("PhantomJS", "karma-phantomjs-launcher");
+    InternetExplorer("IE", PackageDependency.KarmaIeLauncher),
+
+    PhantomJS("PhantomJS", PackageDependency.KarmaPhantomJSLauncher),
+
+    Unknown("unknown", PackageDependency.None);
 
     override fun toJs() = "'$browser'"
 
-    fun toPlugin() = KarmaPlugin(plugin)
+    val plugin: KarmaPlugin get() = KarmaPlugin(dependency.name)
+
+    companion object {
+        fun parse(value: String): KarmaBrowser {
+
+            val normalized = value.trim().toLowerCase()
+
+            return values().firstOrNull {
+                normalized == it.browser.toLowerCase()
+            } ?: Unknown
+        }
+    }
 }

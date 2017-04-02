@@ -1,48 +1,43 @@
 package com.github.crunc.kotlin.jasmine.maven.conf
 
+import com.github.crunc.kotlin.jasmine.maven.Writable
+import java.io.Writer
+
 class KarmaConfJs(
         val basePath: String = "",
-        val frameworks: List<KarmaFramework> = listOf(
-                KarmaFramework("jasmine")
-        ),
-        val plugins: List<KarmaPlugin> = listOf(
-                KarmaPlugin("karma-jasmine")
-        ),
-        val files: List<KarmaFile> = listOf(
-                KarmaFile(pattern = "./node_modules/requirejs/require.js", watched = false),
-                KarmaFile(pattern = "./node_modules/karma-requirejs/lib/adapter.js", watched = false),
-                KarmaFile(pattern = "./../js/**/!(*.meta).js", watched = false),
-                KarmaFile(pattern = "./!(test-main|karma.conf|*.meta).js", watched = false),
-                KarmaFile(pattern = "./!(node_modules|node)/!(*.meta).js", watched = false),
-                KarmaFile(pattern = "./test-main.js", watched = false)
-        ),
+        val frameworks: List<KarmaFramework> = emptyList(),
+        val plugins: List<KarmaPlugin> = emptyList(),
+        val files: List<KarmaFile> = emptyList(),
         val port: Int = 9876,
-        val browsers: List<KarmaBrowser> = listOf(KarmaBrowser.PhantomJS)
-) {
+        val browsers: List<KarmaBrowser> = emptyList()
+) : Writable {
 
-    fun toScript(): String = """module.exports = function (config) {
+    private val allPlugins get() = plugins.plus(browsers.map { it.plugin })
+
+    private val script: String get() = """
+module.exports = function (config) {
   config.set({
-    ${configProperties()
-            .flatMap { (key, value) -> listOf("$key: $value") }
-            .joinToString(separator = ",\n    ")}
+    basePath: '$basePath',
+    frameworks: ${jsArrayOf(frameworks)},
+    plugins: ${jsArrayOf(allPlugins)},
+    files: ${jsArrayOf(files)},
+    proxies: {
+      '/': '/base'
+    },
+    client: {
+      clearContext: false
+    },
+    port: $port,
+    logLevel: config['LOG_INFO'],
+    browsers: ${jsArrayOf(browsers)},
+    colors: false,
+    singleRun: true
   });
-}"""
+}
+""".trim()
 
-    private val allPlugins get() = plugins.plus(browsers.map { it.toPlugin() })
-
-    private fun configProperties(): Map<String, String> = mapOf(
-            "basePath" to "'$basePath'",
-            "frameworks" to jsArrayOf(frameworks),
-            "plugins" to jsArrayOf(allPlugins),
-            "files" to jsArrayOf(files),
-            "proxies" to "{\n      '/': '/base'\n    }",
-            "client" to "{\n      clearContext: false\n    }",
-            "port" to "$port",
-            "logLevel" to "config['LOG_INFO']",
-            "browsers" to jsArrayOf(browsers),
-            "colors" to "false",
-            "singleRun" to "true"
-    )
+    override fun writeTo(writer: Writer) =
+            writer.write(script)
 
     private fun jsArrayOf(elements: Iterable<JsValue>, indentation: String = "\n      ", beforeFirst: String = indentation, afterLast: String = "\n    ") =
             "[$beforeFirst${elements.map { it.toJs() }.joinToString(separator = ",$indentation")}$afterLast]"

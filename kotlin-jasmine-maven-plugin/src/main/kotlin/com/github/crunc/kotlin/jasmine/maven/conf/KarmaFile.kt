@@ -1,6 +1,8 @@
 package com.github.crunc.kotlin.jasmine.maven.conf
 
-class KarmaFile(val pattern: String,
+import java.nio.file.Path
+
+class KarmaFile(val pattern: Path,
                 val watched: Boolean = false,
                 val included: Boolean = true,
                 val served: Boolean = true,
