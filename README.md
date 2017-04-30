@@ -16,38 +16,32 @@ TODO
 <todo/>
 ```
 
-`src/test/resources/package.json`:
-```JSON
-{ "todo": true }
-```
-
-`src/test/resources/karma.conf.js`:
+`karma.conf.js`:
 ```JS
 module.exports = function (config) {
     config.set({
-        basePath: '',
-        frameworks: ['jasmine'],
+        basePath: './',
+        frameworks: [
+            'jasmine'
+        ],
         plugins: [
-            require('karma-jasmine'),
-            require('karma-chrome-launcher')
+            'karma-jasmine',
+            'karma-phantomjs-launcher'
         ],
         files: [
-            {pattern: './kotlin.js', watched: false},
-            {pattern: './kotlin-jasmine-core.js', watched: false},
-            {pattern: './path/to/my/spec.js', watched: false}
+            { pattern: 'target/test-js/*bundle.js', watched: false, included: true, served: true , nocache: false }
         ],
-        proxies: {
-            '/': '/base'
-        },
         client: {
             clearContext: false
         },
-        port: 8765,
+        port: 9876,
         logLevel: config['LOG_INFO'],
-        browsers: ['Chrome'],
+        browsers: [
+            'PhantomJS'
+        ],
         colors: false,
         singleRun: true
-    })
+    });
 };
 ```
 
