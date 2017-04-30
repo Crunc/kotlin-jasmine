@@ -17,6 +17,22 @@
     <name>Kotlin Jasmine Core</name>
     <description>Kotlin JS Jasmine Core Bindings</description>
 
+    <licenses>
+        <license>
+            <name>MIT</name>
+            <url>https://opensource.org/licenses/MIT</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Hauke Jaeger</name>
+            <email>hauke.jaeger@yegair.io</email>
+            <organization>Yegair</organization>
+            <organizationUrl>http://yegair.io</organizationUrl>
+        </developer>
+    </developers>
+
     <dependencies>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
@@ -31,6 +47,23 @@
         <testSourceDirectory>src/test/kotlin</testSourceDirectory>
         <testOutputDirectory>${project.build.directory}/test-js</testOutputDirectory>
         <plugins>
+            <plugin>
+                <groupId>org.jetbrains.dokka</groupId>
+                <artifactId>dokka-maven-plugin</artifactId>
+                <configuration>
+                    <skip>false</skip>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>pre-site</phase>
+                        <goals>
+                            <goal>dokka</goal>
+                            <goal>javadoc</goal>
+                            <goal>javadocJar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
