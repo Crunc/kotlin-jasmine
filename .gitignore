@@ -22,3 +22,10 @@
 /**/.springBeans
 
 .DS_Store
+
+GPG_KEY.asc
+
+pom.xml.next
+pom.xml.releaseBackup
+pom.xml.tag
+release.properties
