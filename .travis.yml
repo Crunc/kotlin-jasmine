@@ -1,8 +1,15 @@
 language: java
 jdk:
   - oraclejdk8
+node_js:
+  - "7"
 sudo: true
 install: true
+before_script:
+  - npm install -g jasmine
+  - npm install -g karma
+  - npm install -g karma-jasmine
+  - npm install -g karma-phantomjs-launcher
 script: travis/mvn-build.sh
 env:
   global:
