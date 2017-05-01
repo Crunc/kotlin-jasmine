@@ -8,7 +8,7 @@ install:
   - . $HOME/.nvm/nvm.sh
   - nvm install stable
   - nvm use stable
-  - npm install -g jasmine-core@2.5.2, karma@1.6.0, karma-jasmine@1.1.0, karma-phantomjs-launcher@1.0.4
+  - npm install -g jasmine-core@2.5.2 karma@1.6.0 karma-jasmine@1.1.0 karma-phantomjs-launcher@1.0.4
 script: travis/mvn-build.sh
 env:
   global:
