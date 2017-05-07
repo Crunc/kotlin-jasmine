@@ -51,12 +51,34 @@ class Result(val pass: Boolean, val message: String? = null)
  */
 interface Comparison {
 
+    /**
+     * Creates a positive matching result.
+     */
     fun pass(): Result
+
+    /**
+     * Creates a negative matching result for the given actual value.
+     */
     fun fail(actual: Any?): Result
+
+    /**
+     * Creates a negative matching result for the given actual and expected values.
+     */
     fun fail(actual: Any?, vararg expected: Any?): Result
+
+    /**
+     * Creates a negative matching result with the given message.
+     */
     fun failWithMessage(message: String): Result
 
+    /**
+     * Compares the given actual and expected values for equality.
+     */
     fun equals(actual: Any?, expected: Any?): Boolean
+
+    /**
+     * Determines whether the given needle is contained in the given haystack.
+     */
     fun contains(haystack: Any?, needle: Any?): Boolean
 }
 

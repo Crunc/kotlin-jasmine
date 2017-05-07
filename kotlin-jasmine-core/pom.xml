@@ -33,6 +33,10 @@
         </developer>
     </developers>
 
+    <properties>
+        <kotlin-js-bundle.version>0.0.1</kotlin-js-bundle.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
@@ -88,12 +92,12 @@
             <plugin>
                 <groupId>io.yegair</groupId>
                 <artifactId>kotlin-js-bundle-maven-plugin</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
+                <version>${kotlin-js-bundle.version}</version>
                 <executions>
                     <execution>
                         <id>bundle</id>
                         <goals>
-                            <goal>bundle-js-test-dependencies</goal>
+                            <goal>test-bundle</goal>
                         </goals>
                     </execution>
                 </executions>
