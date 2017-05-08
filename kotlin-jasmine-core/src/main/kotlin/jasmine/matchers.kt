@@ -25,13 +25,10 @@ package jasmine
  */
 
 /**
- * Runs after each test.
+ * DSL entry point for defining custom matchers.
  */
-@JsName("afterEach")
-external fun afterEach(tearDown: () -> Unit): Unit
-
-/**
- * Runs asynchronously after each test.
- */
-@JsName("afterEach")
-external fun afterEach(asyncTearDown: (done: () -> Unit) -> Unit): Unit
+fun matchers(matcherFactories: MatcherDefinitions.() -> Unit): MatcherRegistrations {
+    val definitions = DynamicMatcherDefinitions()
+    definitions.matcherFactories()
+    return definitions.matcherRegistrations
+}

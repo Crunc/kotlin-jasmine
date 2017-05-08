@@ -25,13 +25,22 @@ package jasmine
  */
 
 /**
- * Runs after each test.
+ * Jasmine matcher utils.
  */
-@JsName("afterEach")
-external fun afterEach(tearDown: () -> Unit): Unit
+external interface MatcherUtils {
 
-/**
- * Runs asynchronously after each test.
- */
-@JsName("afterEach")
-external fun afterEach(asyncTearDown: (done: () -> Unit) -> Unit): Unit
+    /**
+     * Compares two values for equality using custom equality testers.
+     */
+    fun equals(actual: Any?, expected: Any?, customTesters: CustomEqualityTesters = definedExternally): Boolean
+
+    /**
+     * Checks whether the haystack contains the needle. Works for Sets, Arrays and Strings.
+     */
+    fun contains(haystack: Any?, needle: Any?, customTesters: CustomEqualityTesters = definedExternally): Boolean
+
+    /**
+     * Creates a failure message in the form `expected <actual> <text(matcherName)> [<expected>, ...]`
+     */
+    fun buildFailureMessage(matcherName: String, isNot: Boolean, actual: Any?, vararg expected: Any?): String
+}

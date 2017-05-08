@@ -25,13 +25,10 @@ package jasmine
  */
 
 /**
- * Runs after each test.
+ * The result of a matcher compare function.
+ *
+ * @property pass Indicates whether the match was positive (`true`) or negative/mismatch (`false`).
+ * @property message The error message describing the mismatch in case `pass` is `false`.
  */
-@JsName("afterEach")
-external fun afterEach(tearDown: () -> Unit): Unit
-
-/**
- * Runs asynchronously after each test.
- */
-@JsName("afterEach")
-external fun afterEach(asyncTearDown: (done: () -> Unit) -> Unit): Unit
+@Suppress("unused")
+class Result(val pass: Boolean, val message: String? = null)

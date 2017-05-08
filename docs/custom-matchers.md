@@ -6,11 +6,11 @@ TODO
 
 ## Defining custom matchers with the `matchers` DSL
 
-There is no way to provide type safe Kotlin bindings for the Jasmine way of defining custom matchers. Hence it is necessary to have some abstractions on top of the Jasmine framework for defining matchers: The [`matchers`](./api/jasmine/matchers.md) DSL.
+There is no way to provide type safe Kotlin bindings for the Jasmine way of defining custom matchers. Hence it is necessary to have some abstractions on top of the Jasmine framework for defining matchers: The [`matchers`][jasmine.matchers] DSL.
 
 ### Basic usage
 
-[`matchers`](./api/asmine/matchers.md) takes a function with receiver type [`MatcherDefinitions`](./api/jasmine/MatcherDefinitions.md) as it's only argument and returns a [`MatcherRegistrations`](./api/jasmine/MatcherRegistrations.md). This makes it possible to call one of the `matcher` functions from within a [`matchers`](./api/asmine/matchers.md) block, to define new matchers.
+[`matchers`][jasmine.matchers] takes a function with receiver type [`MatcherDefinitions`][jasmine.MatcherDefinitions] as it's only argument and returns a [`MatcherRegistrations`][jasmine.MatcherRegistrations]. This makes it possible to call one of the `matcher` functions from within a [`matchers`][jasmine.matchers] block, to define new matchers.
 
 ```Kotlin
 import jasmine.*
@@ -24,7 +24,7 @@ val customMatchers = matchers {
 }
 ```
 
-The resulting [`MatcherRegistrations`](./api/jasmine/MatcherRegistrations.md) can then be added to Jasmine.
+The resulting [`MatcherRegistrations`][jasmine.MatcherRegistrations] can then be added to Jasmine.
 
 ```Kotlin
 import jasmine.*
@@ -43,7 +43,7 @@ val spec = describe("something") {
   
 ### Defining the simplest possible custom matcher
 
-The simplest possible matcher is one which takes the actual value that has been passed to [`expect`](./api/jasmine/expect.md) and checks whether it meets the matcher's requirements. As an example we will define a matcher `toBeFoo` that checks whether the actual value is a string equal to `"Foo"`.
+The simplest possible matcher is one which takes the actual value that has been passed to [`expect`][jasmine.expect] and checks whether it meets the matcher's requirements. As an example we will define a matcher `toBeFoo` that checks whether the actual value is a string equal to `"Foo"`.
 
 ```Kotlin
 import jasmine.*
@@ -80,18 +80,18 @@ val customMatchers = matchers {
 }
 ```
 
-As you can see the matcher is given a name `"toBeFoo"` and a compare function with a single argument `actual`. What's not so obvious is the fact, that the `compare` functions receiver type is [`Comparison`](./api/jasmin/Comparison.md). It provides some very helpful utility functions we can use from within `compare`:
+As you can see the matcher is given a name `"toBeFoo"` and a compare function with a single argument `actual`. What's not so obvious is the fact, that the `compare` functions receiver type is [`Comparison`][jasmine.Comparison]. It provides some very helpful utility functions we can use from within `compare`:
 
-* `pass()` returns a [`Result`](./api/jasmine/Result.md) which indicates the value was matched successfully.
-* `fail(actual: Any? [, expected: Any?])` returns a [`Result`](./api/jasmine/Result.md) which indicates the value did not match and provides a readable error message (internally it delegates to Jasmine's `buildFailureMessage` function from `matcherUtils`).
-* `failWithMessage(message:String)` returns a [`Result`](./api/jasmine/Result.md) which indicates the value did not match and provides the given error message.
+* `pass()` returns a [`Result`][jasmine.Result] which indicates the value was matched successfully.
+* `fail(actual: Any? [, expected: Any?])` returns a [`Result`][jasmine.Result] which indicates the value did not match and provides a readable error message (internally it delegates to Jasmine's `buildFailureMessage` function from `matcherUtils`).
+* `failWithMessage(message:String)` returns a [`Result`][jasmine.Result] which indicates the value did not match and provides the given error message.
 
 Additionally it exposes Jasmine's `matcherUtils`:
 
 * `equals(actual: Any?, expected: Any?)` compares the given values using [custom equality testers](./custom-equality-testers.md).
 * `contains(haystack: Any?, needle: Any?)` checks whether the given haystack contains the given needle, where haystack can be an `Array` or a `String`.
 
-So in order to use the custom equality testers we can refactor the matcher to use `equals` from [`Comparison`](./api/jasmin/Comparison.md).
+So in order to use the custom equality testers we can refactor the matcher to use `equals` from [`Comparison`][jasmine.Comparison].
 
 ```Kotlin
 import jasmine.*
@@ -131,7 +131,7 @@ val spec = describe("custom matchers") {
 }
 ```
 
-We have to extend the [`expect`](./api/jasmine/expect.md) function to be able to call our matcher. [`expect`](./api/jasmine/expect.md) returns an instance of [`Expectations<T>`](./api/jasmine/Expectations.md) where `T` is the type of the actual value. So we can just write an extension function for `Expectations<String>` to make the Kotlin compiler recognize our new matcher.
+We have to extend the [`expect`][jasmine.expect] function to be able to call our matcher. [`expect`][jasmine.expect] returns an instance of [`Expectations<T>`][jasmine.Expectations] where `T` is the type of the actual value. So we can just write an extension function for `Expectations<String>` to make the Kotlin compiler recognize our new matcher.
 
 ```Kotlin
 import jasmine.*
@@ -192,3 +192,11 @@ private val spec = describe("custom matchers") {
   }
 }
 ```
+
+[jasmine.Comparison]: ../kotlin-jasmine-core/src/main/kotlin/jasmine/Comparison.kt
+[jasmine.expect]: ../kotlin-jasmine-core/src/main/kotlin/jasmine/expect.kt
+[jasmine.Expectations]: ../kotlin-jasmine-core/src/main/kotlin/jasmine/Expectations.kt
+[jasmine.matchers]: ../kotlin-jasmine-core/src/main/kotlin/jasmine/matchers.kt
+[jasmine.MatcherDefinitions]: ../kotlin-jasmine-core/src/main/kotlin/jasmine/MatcherDefinitions.kt
+[jasmine.MatcherRegistrations]: ../kotlin-jasmine-core/src/main/kotlin/jasmine/MatcherRegistrations.kt
+[jasmine.Result]: ../kotlin-jasmine-core/src/main/kotlin/jasmine/Result.kt
