@@ -9,7 +9,7 @@ module.exports = function (config) {
             'karma-phantomjs-launcher'
         ],
         files: [
-            { pattern: 'target/test-js/*bundle.js', watched: false, included: true, served: true , nocache: false }
+            { pattern: 'target/test-js/kotlin-jasmine-core-tests.bundle.js', watched: false, included: true, served: true , nocache: false }
         ],
         client: {
             clearContext: false

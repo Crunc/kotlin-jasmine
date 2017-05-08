@@ -15,6 +15,7 @@ private val customMatchers = matchers {
 
 private fun Expectations<String>.toBeFoo() = match(toBeFoo)
 
+@Suppress("unused")
 private val spec = describe("custom matchers") {
 
     beforeEach({ ->

@@ -42,6 +42,9 @@ fun matchers(matcherFactories: MatcherDefinitions.() -> Unit): MatcherRegistrati
 
 /**
  * The result of a matcher compare function.
+ *
+ * @property pass Indicates whether the match was positive (`true`) or negative/mismatch (`false`).
+ * @property message The error message describing the mismatch in case `pass` is `false`.
  */
 @Suppress("unused")
 class Result(val pass: Boolean, val message: String? = null)
