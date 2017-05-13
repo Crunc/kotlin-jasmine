@@ -92,9 +92,17 @@ internal sealed class BaseComparison(private val matcherName: String,
 }
 
 /**
- * Implementation of [Comparison] that is used as receiver for positive matcher `compare` functions.
+ * Implementation of [Comparison] that is used as receiver for matcher `compare` functions.
  */
 internal class PositiveComparison(
         matcherName: String,
         util: MatcherUtils,
         customTesters: CustomEqualityTesters) : BaseComparison(matcherName, util, customTesters, false)
+
+/**
+ * Implementation of [Comparison] that is used as receiver for matcher `negativeCompare` functions.
+ */
+internal class NegativeComparison(
+        matcherName: String,
+        util: MatcherUtils,
+        customTesters: CustomEqualityTesters) : BaseComparison(matcherName, util, customTesters, true)

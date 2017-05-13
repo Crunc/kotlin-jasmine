@@ -25,6 +25,21 @@ package jasmine
  */
 
 /**
+ * A function that compares an actual to an expected value, considering the given context.
+ */
+private typealias CompareInContext<T, C> = Comparison.(actual: T, expected: T, context: C) -> Result
+
+/**
+ * A function that compares an actual to an expected value.
+ */
+private typealias Compare<T> = Comparison.(actual: T, expected: T) -> Result
+
+/**
+ * A function that checks an actual value.
+ */
+private typealias Check<T> = Comparison.(actual: T) -> Result
+
+/**
  * DSL for defining custom Jasmine matchers.
  */
 interface MatcherDefinitions {
@@ -37,17 +52,35 @@ interface MatcherDefinitions {
     /**
      * Defines a new matcher that compares an `actual` value to an `expected` value using the given `context` value.
      */
-    fun <T, C> matcher(name: String, compare: Comparison.(actual: T, expected: T, context: C) -> Result): Unit
+    fun <T, C> matcher(name: String, compare: CompareInContext<T, C>): Unit
+
+    /**
+     * Defines a new matcher that compares an `actual` value to an `expected` value using the given `context` value.
+     * If the matcher is chained with a `not` expectation, the `negativeCompare` function is used.
+     */
+    fun <T, C> matcher(name: String, compare: CompareInContext<T, C>, negativeCompare: CompareInContext<T, C>): Unit
 
     /**
      * Defines a new matcher that compares an `actual` value to an `expected` value.
      */
-    fun <T> matcher(name: String, compare: Comparison.(actual: T, expected: T) -> Result): Unit
+    fun <T> matcher(name: String, compare: Compare<T>): Unit
+
+    /**
+     * Defines a new matcher that compares an `actual` value to an `expected` value.
+     * If the matcher is chained with a `not` expectation, the `negativeCompare` function is used.
+     */
+    fun <T> matcher(name: String, compare: Compare<T>, negativeCompare: Compare<T>): Unit
 
     /**
      * Defines a new matcher that checks an `actual` value.
      */
-    fun <T> matcher(name: String, compare: Comparison.(actual: T) -> Result): Unit
+    fun <T> matcher(name: String, compare: Check<T>): Unit
+
+    /**
+     * Defines a new matcher that checks an `actual` value.
+     * If the matcher is chained with a `not` expectation, the `negativeCompare` function is used.
+     */
+    fun <T> matcher(name: String, compare: Check<T>, negativeCompare: Check<T>): Unit
 }
 
 /**
@@ -55,6 +88,7 @@ interface MatcherDefinitions {
  * with the matcher names as keys (see [MatcherRegistrations]).
  */
 internal class DynamicMatcherDefinitions : MatcherDefinitions {
+
 
     /**
      * Simple JS object containing all matcher definitions with the matcher names as keys.
@@ -65,42 +99,87 @@ internal class DynamicMatcherDefinitions : MatcherDefinitions {
     override val matcherRegistrations: MatcherRegistrations
         get() = matcherDefinitions
 
-    override fun <T, C> matcher(name: String, compare: Comparison.(actual: T, expected: T, context: C) -> Result): Unit {
+    override fun <T, C> matcher(name: String, compare: CompareInContext<T, C>): Unit {
+        defineMatcher(name, compare)
+    }
+
+    override fun <T, C> matcher(name: String, compare: CompareInContext<T, C>, negativeCompare: CompareInContext<T, C>) {
+        defineMatcher(name, compare, negativeCompare)
+    }
+
+    override fun <T> matcher(name: String, compare: Compare<T>): Unit {
+        defineMatcher(name, compare)
+    }
+
+    override fun <T> matcher(name: String, compare: Compare<T>, negativeCompare: Compare<T>) {
+        defineMatcher(name, compare, negativeCompare)
+    }
+
+    override fun <T> matcher(name: String, compare: Check<T>): Unit {
+        defineMatcher(name, compare)
+    }
+
+    override fun <T> matcher(name: String, compare: Check<T>, negativeCompare: Check<T>) {
+        defineMatcher(name, compare, negativeCompare)
+    }
+
+    private fun <T, C> defineMatcher(name: String, compare: CompareInContext<T, C>, negativeCompare: CompareInContext<T, C>? = null) {
 
         matcherDefinitions[name] = { util: MatcherUtils, customEqualityTesters: CustomEqualityTesters ->
 
             val matcher = js("({})")
 
-            matcher.compare = { actual: T, expected: T, context: C ->
+            matcher["compare"] = { actual: T, expected: T, context: C ->
                 PositiveComparison(name, util, customEqualityTesters).compare(actual, expected, context)
             }
 
-            matcher
-        }
-    }
+            if (negativeCompare != null) {
 
-    override fun <T> matcher(name: String, compare: Comparison.(actual: T, expected: T) -> Result): Unit {
-
-        matcherDefinitions[name] = { util: MatcherUtils, customEqualityTesters: CustomEqualityTesters ->
-
-            val matcher = js("({})")
-
-            matcher.compare = { actual: T, expected: T ->
-                PositiveComparison(name, util, customEqualityTesters).compare(actual, expected)
+                matcher["negativeCompare"] = { actual: T, expected: T, context: C ->
+                    NegativeComparison(name, util, customEqualityTesters).negativeCompare(actual, expected, context)
+                }
             }
 
             matcher
         }
     }
 
-    override fun <T> matcher(name: String, compare: Comparison.(actual: T) -> Result): Unit {
+    private fun <T> defineMatcher(name: String, compare: Compare<T>, negativeCompare: Compare<T>? = null) {
 
         matcherDefinitions[name] = { util: MatcherUtils, customEqualityTesters: CustomEqualityTesters ->
 
             val matcher = js("({})")
 
-            matcher.compare = { actual: T ->
+            matcher["compare"] = { actual: T, expected: T ->
+                PositiveComparison(name, util, customEqualityTesters).compare(actual, expected)
+            }
+
+            if (negativeCompare != null) {
+
+                matcher["negativeCompare"] = { actual: T, expected: T ->
+                    NegativeComparison(name, util, customEqualityTesters).negativeCompare(actual, expected)
+                }
+            }
+
+            matcher
+        }
+    }
+
+    private fun <T> defineMatcher(name: String, compare: Check<T>, negativeCompare: Check<T>? = null): Unit {
+
+        matcherDefinitions[name] = { util: MatcherUtils, customEqualityTesters: CustomEqualityTesters ->
+
+            val matcher = js("({})")
+
+            matcher["compare"] = { actual: T ->
                 PositiveComparison(name, util, customEqualityTesters).compare(actual)
+            }
+
+            if (negativeCompare != null) {
+
+                matcher["negativeCompare"] = { actual: T ->
+                    NegativeComparison(name, util, customEqualityTesters).negativeCompare(actual)
+                }
             }
 
             matcher
