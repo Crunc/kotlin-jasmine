@@ -27,7 +27,7 @@ package jasmine
 /**
  * A function that compares an actual to an expected value, considering the given context.
  */
-private typealias CompareInContext<T, C> = Comparison.(actual: T, expected: T, context: C) -> Result
+private typealias CompareWithContext<T, C> = Comparison.(actual: T, expected: T, context: C) -> Result
 
 /**
  * A function that compares an actual to an expected value.
@@ -52,13 +52,13 @@ interface MatcherDefinitions {
     /**
      * Defines a new matcher that compares an `actual` value to an `expected` value using the given `context` value.
      */
-    fun <T, C> matcher(name: String, compare: CompareInContext<T, C>): Unit
+    fun <T, C> matcher(name: String, compare: CompareWithContext<T, C>): Unit
 
     /**
      * Defines a new matcher that compares an `actual` value to an `expected` value using the given `context` value.
      * If the matcher is chained with a `not` expectation, the `negativeCompare` function is used.
      */
-    fun <T, C> matcher(name: String, compare: CompareInContext<T, C>, negativeCompare: CompareInContext<T, C>): Unit
+    fun <T, C> matcher(name: String, compare: CompareWithContext<T, C>, negativeCompare: CompareWithContext<T, C>): Unit
 
     /**
      * Defines a new matcher that compares an `actual` value to an `expected` value.
@@ -99,11 +99,11 @@ internal class DynamicMatcherDefinitions : MatcherDefinitions {
     override val matcherRegistrations: MatcherRegistrations
         get() = matcherDefinitions
 
-    override fun <T, C> matcher(name: String, compare: CompareInContext<T, C>): Unit {
+    override fun <T, C> matcher(name: String, compare: CompareWithContext<T, C>): Unit {
         defineMatcher(name, compare)
     }
 
-    override fun <T, C> matcher(name: String, compare: CompareInContext<T, C>, negativeCompare: CompareInContext<T, C>) {
+    override fun <T, C> matcher(name: String, compare: CompareWithContext<T, C>, negativeCompare: CompareWithContext<T, C>) {
         defineMatcher(name, compare, negativeCompare)
     }
 
@@ -123,7 +123,7 @@ internal class DynamicMatcherDefinitions : MatcherDefinitions {
         defineMatcher(name, compare, negativeCompare)
     }
 
-    private fun <T, C> defineMatcher(name: String, compare: CompareInContext<T, C>, negativeCompare: CompareInContext<T, C>? = null) {
+    private fun <T, C> defineMatcher(name: String, compare: CompareWithContext<T, C>, negativeCompare: CompareWithContext<T, C>? = null) {
 
         matcherDefinitions[name] = { util: MatcherUtils, customEqualityTesters: CustomEqualityTesters ->
 

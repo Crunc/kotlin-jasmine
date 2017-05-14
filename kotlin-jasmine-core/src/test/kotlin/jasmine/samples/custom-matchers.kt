@@ -5,7 +5,14 @@ import jasmine.*
 private const val toBeFoo = "toBeFoo"
 private const val toSharePrefixWith = "toSharePrefixWith"
 
+/**
+ * A matcher registration object that can be used with `jasmine.addMatchers`.
+ */
 private val customMatchers = matchers {
+
+    /*
+     * A simple matcher with a compare function that checks the actual value.
+     */
     matcher(toBeFoo) { actual: String ->
         when (equals(actual, "Foo")) {
             true -> pass()
@@ -13,6 +20,9 @@ private val customMatchers = matchers {
         }
     }
 
+    /*
+     * A complex matcher with a `negativeCompare` function that is called then `not` is used.
+     */
     matcher(name = toSharePrefixWith,
             compare = { actual: String, expected: String, context: Int ->
 
@@ -41,14 +51,26 @@ private val customMatchers = matchers {
     )
 }
 
+/**
+ * Registers the simple matcher by name with an extension function so the fluent `expect` API
+ * can be used in a type safe way.
+ */
 private fun Expectations<String>.toBeFoo() = match(toBeFoo)
-private fun Expectations<String>.toSharePrefixWith(expected:String, length:Int) =
-        match(toSharePrefixWith, expected, length)
+
+/**
+ * Registers the complex matcher by name with an extension function, so the fluent `expect` API
+ * can be used in a type safe way.
+ */
+private fun Expectations<String>.toSharePrefixWith(expected: String, context: Int) = match(toSharePrefixWith, expected, context)
 
 @Suppress("unused")
 private val spec = describe("custom matchers") {
 
     beforeEach({ ->
+
+        /*
+         * Registers the custom matchers with Jasmine so they can be used from tests.
+         */
         jasmine.addMatchers(customMatchers)
     })
 
