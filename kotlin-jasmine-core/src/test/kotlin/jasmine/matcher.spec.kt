@@ -96,7 +96,7 @@ private fun Expectations<Int>.toBeSumOf(op1: Int, op2: Int): Unit
 private val spec = describe("matcher") {
 
     beforeEach { ->
-        jasmine.addMatchers(matchers)
+        Jasmine.addMatchers(matchers)
     }
 
     describe("toBeFoo") {

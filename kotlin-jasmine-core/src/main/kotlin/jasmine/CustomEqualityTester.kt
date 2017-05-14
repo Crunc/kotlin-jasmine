@@ -1,7 +1,5 @@
 package jasmine
 
-import kotlin.reflect.KClass
-
 /*
  * MIT License
  *
@@ -27,23 +25,8 @@ import kotlin.reflect.KClass
  */
 
 /**
- * Type of the global Jasmine object.
+ * A custom equality tester function that can be registered with Jasmine.
+ *
+ * @author Hauke Jaeger, hauke.jaeger@yegair.io
  */
-external interface GlobalJasmine {
-
-    /**
-     * Registers (custom) matchers with Jasmine.
-     */
-    fun addMatchers(matcherRegistrations: MatcherRegistrations)
-
-    /**
-     * Registers the given custom equality tester with Jasmine.
-     */
-    fun addCustomEqualityTester(tester: (first: Any?, second: Any?) -> Boolean?)
-}
-
-/**
- * Global Jasmine object.
- */
-@JsName("jasmine")
-external val Jasmine: GlobalJasmine
+typealias CustomEqualityTester = (first: Any?, second: Any?) -> Boolean?

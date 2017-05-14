@@ -71,7 +71,7 @@ private val spec = describe("custom matchers") {
         /*
          * Registers the custom matchers with Jasmine so they can be used from tests.
          */
-        jasmine.addMatchers(customMatchers)
+        Jasmine.addMatchers(customMatchers)
     })
 
     it("Foo should be Foo") { ->
