@@ -4,44 +4,12 @@ Kotlin JS Jasmine Bindings
 
 ## [Guide](./docs/guide.md)
 
-## Setup
+## Not yet implemented
 
-TODO
+There are some advanced features of Jasmine that have not yet been implemented, but will be in future releases:
 
-
-### Karma, Maven, frontend-maven-plugin
-
-`pom.xml`:
-```XML
-<todo/>
-```
-
-`karma.conf.js`:
-```JS
-module.exports = function (config) {
-    config.set({
-        basePath: './',
-        frameworks: [
-            'jasmine'
-        ],
-        plugins: [
-            'karma-jasmine',
-            'karma-phantomjs-launcher'
-        ],
-        files: [
-            { pattern: 'target/test-js/*bundle.js', watched: false, included: true, served: true , nocache: false }
-        ],
-        client: {
-            clearContext: false
-        },
-        port: 9876,
-        logLevel: config['LOG_INFO'],
-        browsers: [
-            'PhantomJS'
-        ],
-        colors: false,
-        singleRun: true
-    });
-};
-```
-
+* `beforeAll`: A callback that is executed once before all specs in a `describe`.
+ * `afterAll`: A callback that is executed once after all specs in a `describe`.
+* `fail`: A function that can be called from within a Spec that indicates the test has failed.
+* `expect(fn).toThrowError()` An expectation that checks whether the given function throws a specific error.
+* `Spies`:
