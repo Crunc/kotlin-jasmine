@@ -1,0 +1,41 @@
+description = 'Kotlin Jasmine Core'
+
+apply plugin: 'kotlin2js'
+apply plugin: 'org.jetbrains.kotlin.frontend'
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+//    compile "org.jetbrains.kotlin:kotlin-test-js:$kotlin_version" // for now only compile configuration is supported
+}
+
+compileKotlin2Js {
+    kotlinOptions.metaInfo = true
+    kotlinOptions.outputFile = "$project.buildDir.path/js/${project.name}.js"
+    kotlinOptions.sourceMap = true
+    kotlinOptions.moduleKind = 'umd'
+    kotlinOptions.main = "call"
+}
+
+compileTestKotlin2Js {
+    kotlinOptions.metaInfo = true
+    kotlinOptions.outputFile = "$project.buildDir.path/js-tests/${project.name}-tests.js"
+    kotlinOptions.sourceMap = true
+    kotlinOptions.moduleKind = 'umd'
+//    kotlinOptions.moduleName = project.name + "-test"
+    kotlinOptions.main = "call"
+}
+
+kotlinFrontend {
+
+    npm {
+        devDependency("jasmine-core", "2.5.2")
+        devDependency("karma-jasmine", "1.1.0")
+        devDependency("karma", "1.7.1")
+    }
+
+    define "PRODUCTION", false
+
+    karma {
+        customConfigFile = "karma.conf.js"
+    }
+}

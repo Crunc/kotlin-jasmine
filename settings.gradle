@@ -1,0 +1,4 @@
+rootProject.name = 'kotlin-jasmine'
+include ':kotlin-jasmine-core'
+
+project(':kotlin-jasmine-core').projectDir = "$rootDir/kotlin-jasmine-core" as File

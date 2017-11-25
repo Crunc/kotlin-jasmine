@@ -1,0 +1,19 @@
+{
+    "name": "kotlin-jasmine-core",
+    "version": "2.5.2-SNAPSHOT",
+    "description": "simple description",
+    "main": "kotlin-jasmine-core",
+    "dependencies": {
+        "kotlin": "file:///Users/yegair/projects/kotlin-jasmine/kotlin-jasmine-core/build/node_modules_imported/kotlin/"
+    },
+    "devDependencies": {
+        "jasmine-core": "2.5.2",
+        "karma-jasmine": "1.1.0",
+        "karma": "1.7.1",
+        "qunitjs": "1.23.1",
+        "karma-qunit": "*",
+        "karma-sourcemap-loader": "*",
+        "karma-phantomjs-launcher": "*",
+        "phantomjs-prebuilt": "*"
+    }
+}

@@ -1,0 +1,1 @@
+kotlin/1.1.51/1.1.51/file:///Users/yegair/projects/kotlin-jasmine/kotlin-jasmine-core/build/node_modules_imported/kotlin/
